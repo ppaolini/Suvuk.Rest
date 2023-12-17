@@ -14,6 +14,7 @@ namespace Suvuk.Rest
         public IContentSerializer ResponseContentSerializer { get; set; }
         public Uri BaseUrl { get; set; }
         public bool EnsureSuccessStatusCode { get; set; } = false;
+        public TimeSpan Timeout { get => _httpClient.Timeout; set => _httpClient.Timeout = value; }
 
         public RestClient(string baseUrl = null) : this(new HttpClient(), baseUrl) { }
 
@@ -32,12 +33,16 @@ namespace Suvuk.Rest
         {
             return ExecuteRequest<TOutput, TInput>(relativeUri, HttpMethod.Post, content);
         }
+
         public RestResponse<TOutput> Post<TOutput, TInput>(string relativeUri, TInput content)
         {
             return ExecuteRequest<TOutput, TInput>(relativeUri, HttpMethod.Post, content);
         }
+
         public void Put() { }
+
         public void Delete() { }
+
         public void Patch(string relativeUri)
         {
             HttpMethod method;
