@@ -10,7 +10,6 @@ namespace Suvuk.Rest
     {
         private HttpResponseMessage _response;
         private IContentSerializer _serializer;
-        private string toto;
 
         public T Content
         {
