@@ -14,16 +14,25 @@ namespace Suvuk.Rest.Authentication
         private readonly IRestClient _restClient;
         private string _accessToken;
         private DateTime _tokenExpiration;
+        private int _tokenExpirationMargin;
 
-        public OAuth2ClientCredentialsAuthenticationProvider(string tokenEndpoint, string clientId, string clientSecret)
+        public OAuth2ClientCredentialsAuthenticationProvider(string tokenEndpoint, string clientId, string clientSecret, int tokenExpirationMargin = 15) : this(
+            new RestClient(tokenEndpoint)
+                .WithRequestSerializer<FormUrlEncodedContentSerializer>()
+                .WithResponseSerializer<JsonContentSerializer>()
+                .WithEnsureSuccessStatusCode(),
+            clientId,
+            clientSecret,
+            tokenExpirationMargin)
+        { }
+
+        public OAuth2ClientCredentialsAuthenticationProvider(IRestClient restClient, string clientId, string clientSecret, int tokenExpirationMargin = 15)
         {
             _clientId = clientId;
             _clientSecret = clientSecret;
-            _restClient = new RestClient(tokenEndpoint)
-                .WithRequestSerializer<FormUrlEncodedContentSerializer>()
-                .WithResponseSerializer<JsonContentSerializer>()
-                .WithEnsureSuccessStatusCode();
+            _restClient = restClient;
             _tokenExpiration = DateTime.Now.AddSeconds(-1);
+            _tokenExpirationMargin = tokenExpirationMargin;
         }
 
         public void AddAuthentication(HttpRequestMessage request)
@@ -48,7 +57,7 @@ namespace Suvuk.Rest.Authentication
             OAuth2TokenResponse tokenResponse = response.Content;
             _accessToken = tokenResponse.AccessToken;
             // set new token expiration time with a safety margin to account for processing time and network latency
-            _tokenExpiration = DateTime.Now.AddSeconds(tokenResponse.ExpiresIn - Math.Min(tokenResponse.ExpiresIn / 2, 30));
+            _tokenExpiration = DateTime.Now.AddSeconds(tokenResponse.ExpiresIn - Math.Min(tokenResponse.ExpiresIn / 2, _tokenExpirationMargin));
         }
     }
 }
