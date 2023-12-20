@@ -20,6 +20,14 @@ namespace Suvuk.Rest
             }
         }
 
+        public string ContentAsString
+        {
+            get
+            {
+                return _response.Content.ReadAsStringAsync().Result;
+            }
+        }
+
         public bool IsSuccessStatusCode => _response.IsSuccessStatusCode;
         public string ReasonPhrase => _response.ReasonPhrase;
         public Version Version => _response.Version;
