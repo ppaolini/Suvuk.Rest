@@ -1,4 +1,4 @@
-﻿using Suvuk.Rest.Authentication;
+using Suvuk.Rest.Authentication;
 using Suvuk.Rest.Serialization;
 using System;
 using System.Net.Http;
@@ -31,7 +31,7 @@ namespace Suvuk.Rest
 
         public RestResponse<TOutput> Get<TOutput, TInput>(string relativeUri, TInput content)
         {
-            return ExecuteRequest<TOutput, TInput>(relativeUri, HttpMethod.Post, content);
+            return ExecuteRequest<TOutput, TInput>(relativeUri, HttpMethod.Get, content);
         }
 
         public RestResponse<TOutput> Post<TOutput, TInput>(string relativeUri, TInput content)
